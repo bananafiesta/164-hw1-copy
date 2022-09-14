@@ -5,9 +5,16 @@ open S_exp
 
 (* Task 1.1 *)
 
-let string_of_s_exp : s_exp -> string =
+let rec string_of_s_exp : s_exp -> string =
   fun exp ->
-    failwith "TODO"
+    (* failwith "TODO" *)
+    match exp with
+    | Num n -> string_of_int n
+    | Sym x -> x
+    | Lst [] -> "()"
+    | Lst j -> "(" ^ String.concat " " (List.map string_of_s_exp j) ^ ")"
+  
+
 
 (******************************************************************************)
 (* Task 2 *)
@@ -16,9 +23,13 @@ let string_of_s_exp : s_exp -> string =
 
 (* Task 2.2 *)
 
-let is_bin : s_exp -> bool =
+let rec is_bin : s_exp -> bool =
   fun exp ->
-    failwith "TODO"
+    (* failwith "TODO" *)
+    match exp with
+    | Num _ -> true
+    | Lst [Sym "*" | Sym "+"; arg2; arg3] -> is_bin arg2 && is_bin arg3
+    | _ -> false
 
 (* Task 2.3 is found in `test/test_arith.ml` *)
 
@@ -26,9 +37,15 @@ let is_bin : s_exp -> bool =
 
 exception Stuck of s_exp
 
-let interp_bin : s_exp -> int =
+let rec interp_bin : s_exp -> int =
   fun exp ->
-    failwith "TODO"
+    (* failwith "TODO" *)
+    match exp with
+    | Num n -> n
+    | Lst [Sym "*"; arg2; arg3] -> (interp_bin arg2) * (interp_bin arg3)
+    | Lst [Sym "+"; arg2; arg3] -> (interp_bin arg2) + (interp_bin arg3)
+    | _ -> raise (Stuck exp)
+
 
 (* Task 2.5 is found in `test/test_arith.ml` *)
 
