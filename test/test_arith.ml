@@ -178,6 +178,8 @@ let test_variadic : test_ctxt -> unit =
         (Lst[Sym "+"; Lst[Sym "*"; Num 2; Lst[Sym "+"; Num 6; Num 10]]; Lst[Sym "+"; Num 13; Num 23]]);
         (Lst[Sym "+"]);
         (Lst[Sym "*"]);
+        (Lst[Sym "+"; Num 3]);
+        (Lst[Sym "*"; Lst[Sym "+"; Num 1; Num 2; Num 3]]);
         (Lst[Sym "+"; Num 0; Num 1; Num 2; Num 3]);
         (Lst[Sym "*"; Num 2; Num 3; Num 4]);
         (Lst[Sym "+"; Num 4; Lst[Sym "*"; Num 3; Num 4; Lst[Sym "+"; Num 5; Num 3; Num 4]]; Lst[Sym "+"; Num 2; Num 5; Num 9; Lst[Sym "*"; Num 3; Num 9]]])
