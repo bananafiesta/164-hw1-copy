@@ -182,6 +182,19 @@ let test_variadic : test_ctxt -> unit =
         (Lst[Sym "*"; Num 2; Num 3; Num 4]);
         (Lst[Sym "+"; Num 4; Lst[Sym "*"; Num 3; Num 4; Lst[Sym "+"; Num 5; Num 3; Num 4]]; Lst[Sym "+"; Num 2; Num 5; Num 9; Lst[Sym "*"; Num 3; Num 9]]])
 
+      ];
+      List.iter
+      ( fun (expected, input) ->
+          assert_equal
+            (expected)
+            (interp_variadic input)
+      )
+      [
+        (6, Lst[Sym "+"; Num 0; Num 1; Num 2; Num 3]);
+        (24, Lst[Sym "*"; Num 2; Num 3; Num 4]);
+        (191, (Lst[Sym "+"; Num 4; Lst[Sym "*"; Num 3; Num 4; Lst[Sym "+"; Num 5; Num 3; Num 4]]; Lst[Sym "+"; Num 2; Num 5; Num 9; Lst[Sym "*"; Num 3; Num 9]]]))
+
+
       ]
 
 (******************************************************************************)
