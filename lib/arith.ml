@@ -63,19 +63,41 @@ exception ShortStack of stack
 
 let interp_instr : stack -> instr -> stack =
   fun stack instr ->
-    failwith "TODO"
+    (* failwith "TODO" *)
+    match instr with
+    | Add -> 
+      (if ((List.length stack) >= 2) then 
+        (let arg1 = (List.hd stack) and arg2 = (List.hd (List.tl stack)) in
+          (List.append ([arg1 + arg2]) (List.tl (List.tl stack))))
+      else raise (ShortStack stack))
+    | Mul -> 
+      (if ((List.length stack) >= 2) then 
+        (let arg1 = (List.hd stack) and arg2 = (List.hd (List.tl stack)) in
+          (List.append ([arg1 * arg2]) (List.tl (List.tl stack))))
+      else raise (ShortStack stack))
+    | Push n -> List.append [n] stack
 
 let interp_program : instr list -> int =
   fun instrs ->
-    failwith "TODO"
+    (* failwith "TODO" *)
+    match instrs with
+    | [] -> 0
+    | _ ->
+      let stack = [] in 
+        List.hd(List.fold_left interp_instr stack instrs)
 
 (* Task 2.7 is found in `test/test_arith.ml` *)
 
 (* Task 2.8 *)
 
-let compile_bin : s_exp -> instr list =
+let rec compile_bin : s_exp -> instr list =
   fun exp ->
-    failwith "TODO"
+    (* failwith "TODO" *)
+    match exp with 
+    | Num n -> [Push n]
+    | Lst [Sym "+"; arg1; arg2] -> (compile_bin arg1) @ (compile_bin arg2) @ [Add]
+    | Lst [Sym "*"; arg1; arg2] -> (compile_bin arg1) @ (compile_bin arg2) @ [Mul]
+    | _ -> raise (Stuck exp)
 
 (* Task 2.9 is found in `test/test_arith.ml` *)
 
@@ -84,14 +106,32 @@ let compile_bin : s_exp -> instr list =
 
 (* Task 3.1 *)
 
-let desugar_variadic : s_exp -> s_exp =
+let rec desugar_variadic : s_exp -> s_exp =
   fun exp ->
-    failwith "TODO"
+    (* failwith "TODO" *)
+    match exp with
+    | Num n -> Num n;
+    | Lst [Sym "+"] -> Num 0
+    | Lst [Sym "*"] -> Num 1
+    (* | Lst [Sym s; arg1; arg2] -> (Lst [Sym s; desugar_variadic arg1; desugar_variadic arg2]) *)
+    | Lst [Sym _; arg1] -> desugar_variadic arg1
+    | Lst(Sym "+" :: arg :: rest) -> Lst [Sym "+"; desugar_variadic arg; desugar_variadic (Lst(Sym "+" :: rest))]
+    | Lst(Sym "*" :: arg :: rest) -> Lst [Sym "*"; desugar_variadic arg; desugar_variadic (Lst(Sym "*" :: rest))]
+    | _ -> Lst []
+
 
 (* Task 3.2 *)
 
-let interp_variadic : s_exp -> int =
+let rec interp_variadic : s_exp -> int =
   fun exp ->
-    failwith "TODO"
+    (* failwith "TODO" *)
+    match exp with
+    | Num n -> n
+    | Lst [Sym "+"] -> 0
+    | Lst [Sym "*"] -> 1
+    | Lst [Sym _; arg1] -> interp_variadic arg1
+    | Lst(Sym "+" :: arg :: rest) -> (interp_variadic arg) + (interp_variadic (Lst(Sym "+" :: rest)))
+    | Lst(Sym "*" :: arg :: rest) -> (interp_variadic arg) * (interp_variadic (Lst(Sym "*" :: rest)))
+    | _ -> raise (Stuck exp)
 
 (* Task 3.3 is found in `test/test_arith.ml` *)
